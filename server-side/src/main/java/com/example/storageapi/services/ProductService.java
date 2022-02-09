@@ -45,7 +45,7 @@ public class ProductService {
 
     public List<Product> searchBySpec(String name, String company, String numericFilter, String sortQuery, String page, String limit) {
         // Create a specification with name and company first
-        Specification<Product> final_spec = where(withName(name)).and((withCompany(company)));
+        Specification<Product> final_spec = where(withStringFilter("name", name)).and((withStringFilter("company", company)));
 
         // Check if there are numeric filters and add their respective specification
         if ( !(numericFilter == null || numericFilter.equals("")) ) {
@@ -77,8 +77,9 @@ public class ProductService {
         if (!(page == null || page.equals(""))) pageNumber = Integer.parseInt(page);
         if (!(limit == null || limit.equals(""))) limitNumber = Integer.parseInt(limit);
 
-        int startIndex = (pageNumber - 1) * limitNumber;
-        fetchedProducts = fetchedProducts.subList(startIndex, startIndex + limitNumber);
+        int startIndex = Math.min(fetchedProducts.size(), (pageNumber - 1) * limitNumber);
+        int endIndex = Math.min(fetchedProducts.size(), startIndex + limitNumber);
+        fetchedProducts = fetchedProducts.subList(startIndex, endIndex);
 
         return fetchedProducts;
     }

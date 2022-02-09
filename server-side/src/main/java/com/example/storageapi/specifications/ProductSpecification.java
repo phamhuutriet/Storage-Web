@@ -9,25 +9,12 @@ import javax.persistence.criteria.Root;
 import java.util.*;
 
 public class ProductSpecification {
-    private final static List<String> companies = Arrays.asList("ikea", "liddy", "caressa", "marcos");
-    private final static Set<String> companiesSet = new HashSet<>(companies);
-
-    public static Specification<Product> withName(String name) {
+    public static Specification<Product> withStringFilter(String feature, String value) {
         return new Specification<Product>() {
             @Override
             public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                if (name == null || name.equals("")) return cb.isTrue(cb.literal(true));
-                return cb.like(root.get("name"), "%" + name + "%");
-            }
-        };
-    }
-
-    public static Specification<Product> withCompany(String company) {
-        return new Specification<Product>() {
-            @Override
-            public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                if (company == null || company.equals("")) return cb.isTrue(cb.literal(true));
-                return cb.equal(root.get("company"), company);
+                if (value == null || value.equals("")) return cb.isTrue(cb.literal(true));
+                return cb.like(root.get(feature), "%" + value + "%");
             }
         };
     }
