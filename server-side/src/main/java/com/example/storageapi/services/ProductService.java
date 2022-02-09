@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.example.storageapi.specifications.ProductSpecification.withCompany;
 import static com.example.storageapi.specifications.ProductSpecification.withName;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 
 @Service
@@ -33,9 +35,9 @@ public class ProductService {
         return productRepository.saveAll(populatedData);
     }
 
-    public List<Product> searchBySpec(String name) {
+    public List<Product> searchBySpec(String name, String company) {
         System.out.println("The name is " + name);
-        return productRepository.findAll(withName(name));
+        return productRepository.findAll(where(withName(name)).and((withCompany(company))));
     }
 
 }

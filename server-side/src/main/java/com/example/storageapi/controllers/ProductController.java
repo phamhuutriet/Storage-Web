@@ -31,7 +31,8 @@ public class ProductController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<Product>> searchBySpec(@Nullable @RequestParam(name = "name") String name) {
-        return ResponseEntity.ok(productService.searchBySpec(name));
+    public ResponseEntity<List<Product>> searchBySpec(@Nullable @RequestParam(name = "name") String name,
+                                                      @Nullable @RequestParam(name = "company") String company) {
+        return ResponseEntity.ok(productService.searchBySpec(name, company));
     }
 }

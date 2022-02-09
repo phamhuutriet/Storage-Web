@@ -34,4 +34,5 @@ public class Product {
     public Product() {
         this.createdAt = new Date();
     }
+
 }
