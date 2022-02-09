@@ -1,6 +1,6 @@
 package com.example.storageapi.specifications;
 
-import com.example.storageapi.models.Product;
+import com.example.storageapi.models.product.Product;
 import org.springframework.data.jpa.domain.Specification;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -32,7 +32,7 @@ public class ProductSpecification {
         };
     }
 
-    public static Specification<Product> withNumericFilter(String feature, String operation, float value) {
+    public static Specification<Product> withNumericFilter(String feature, String operation, double value) {
         return new Specification<Product>() {
             @Override
             public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> query, CriteriaBuilder cb) {

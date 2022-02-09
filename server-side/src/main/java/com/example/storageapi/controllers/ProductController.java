@@ -1,5 +1,5 @@
 package com.example.storageapi.controllers;
-import com.example.storageapi.models.Product;
+import com.example.storageapi.models.product.Product;
 import com.example.storageapi.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +33,8 @@ public class ProductController {
     @GetMapping("")
     public ResponseEntity<List<Product>> searchBySpec(@Nullable @RequestParam(name = "name") String name,
                                                       @Nullable @RequestParam(name = "company") String company,
-                                                      @Nullable @RequestParam(name = "numericFilter") String numericFilter) {
-        return ResponseEntity.ok(productService.searchBySpec(name, company, numericFilter));
+                                                      @Nullable @RequestParam(name = "numericFilter") String numericFilter,
+                                                      @Nullable @RequestParam(name = "sort") String sortQuery) {
+        return ResponseEntity.ok(productService.searchBySpec(name, company, numericFilter, sortQuery));
     }
 }

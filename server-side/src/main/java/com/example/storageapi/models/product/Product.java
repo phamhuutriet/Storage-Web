@@ -1,4 +1,4 @@
-package com.example.storageapi.models;
+package com.example.storageapi.models.product;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +23,7 @@ public class Product {
     @Getter @Setter private float price;
 
     @Column
-    @Getter @Setter private float rating;
+    @Getter @Setter private double rating;
 
     @Column(nullable = false)
     @Getter @Setter private Date createdAt;

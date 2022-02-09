@@ -1,9 +1,8 @@
 package com.example.storageapi.services;
-import com.example.storageapi.models.Product;
+import com.example.storageapi.models.product.*;
 import com.example.storageapi.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -16,9 +15,18 @@ import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service
 public class ProductService {
+    // INSTANCES
     private final static Set<String> numericTypes = new HashSet<>(Arrays.asList("rating", "price"));
+    private final static HashMap<String, Comparator<Product>> sortDict = new HashMap<String, Comparator<Product>>();
+    static {
+        sortDict.put("name", new ProductNameComparator());
+        sortDict.put("company", new ProductCompanyComparator());
+        sortDict.put("rating", new ProductRatingComparator());
+        sortDict.put("price", new ProductPriceComparator());
+    }
     private final ProductRepository productRepository;
 
+    // CONSTRUCTOR
     @Autowired
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
@@ -35,7 +43,7 @@ public class ProductService {
         return productRepository.saveAll(populatedData);
     }
 
-    public List<Product> searchBySpec(String name, String company, String numericFilter) {
+    public List<Product> searchBySpec(String name, String company, String numericFilter, String sortQuery) {
         Specification<Product> final_spec = where(withName(name)).and((withCompany(company)));
 
         if ( !(numericFilter == null || numericFilter.equals("")) ) {
@@ -45,7 +53,22 @@ public class ProductService {
             }
         }
 
-        return productRepository.findAll(final_spec);
+        List<Product> fetchedProducts = productRepository.findAll(final_spec);
+
+        if ( !(sortQuery == null || sortQuery.equals("")) ) {
+            List<Comparator<Product>> sortChained = new ArrayList<>();
+            String[] sortList = sortQuery.split(",");
+            for (String sortType: sortList) {
+                if (sortDict.containsKey(sortType)) {
+                    sortChained.add(sortDict.get(sortType));
+                }
+            }
+            if (sortChained.size() > 0) {
+                fetchedProducts.sort(new ProductChainedComparator(sortChained));
+            }
+        }
+
+        return fetchedProducts;
     }
 
     private List<Specification<Product>> handleNumericFilter(String s) {
@@ -69,8 +92,7 @@ public class ProductService {
             String[] temp = filter.split("-");
             if (numericTypes.contains(temp[0])) {
                 String type = temp[0], operation = temp[1], value = temp[2];
-                System.out.printf("Test split each filter: type = %s, operation = %s, value = %s \n", type, operation, value);
-                numericFilterList.add(withNumericFilter(type, operation, Float.parseFloat(value)));
+                numericFilterList.add(withNumericFilter(type, operation, Double.parseDouble(value)));
             }
         }
 

@@ -1,6 +1,6 @@
 package com.example.storageapi.repositories;
 
-import com.example.storageapi.models.Product;
+import com.example.storageapi.models.product.Product;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
