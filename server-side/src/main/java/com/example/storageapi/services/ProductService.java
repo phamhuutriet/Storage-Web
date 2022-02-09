@@ -43,9 +43,11 @@ public class ProductService {
         return productRepository.saveAll(populatedData);
     }
 
-    public List<Product> searchBySpec(String name, String company, String numericFilter, String sortQuery) {
+    public List<Product> searchBySpec(String name, String company, String numericFilter, String sortQuery, String page, String limit) {
+        // Create a specification with name and company first
         Specification<Product> final_spec = where(withName(name)).and((withCompany(company)));
 
+        // Check if there are numeric filters and add their respective specification
         if ( !(numericFilter == null || numericFilter.equals("")) ) {
             List<Specification<Product>> numericSpecs = handleNumericFilter(numericFilter);
             for (Specification<Product> spec : numericSpecs) {
@@ -53,8 +55,10 @@ public class ProductService {
             }
         }
 
+        // Fetch the data before sort or add paging and limit
         List<Product> fetchedProducts = productRepository.findAll(final_spec);
 
+        // Sort handling
         if ( !(sortQuery == null || sortQuery.equals("")) ) {
             List<Comparator<Product>> sortChained = new ArrayList<>();
             String[] sortList = sortQuery.split(",");
@@ -68,12 +72,21 @@ public class ProductService {
             }
         }
 
+        // Page number and Limit number handling
+        int pageNumber = 1, limitNumber = 5;
+        if (!(page == null || page.equals(""))) pageNumber = Integer.parseInt(page);
+        if (!(limit == null || limit.equals(""))) limitNumber = Integer.parseInt(limit);
+
+        int startIndex = (pageNumber - 1) * limitNumber;
+        fetchedProducts = fetchedProducts.subList(startIndex, startIndex + limitNumber);
+
         return fetchedProducts;
     }
 
     private List<Specification<Product>> handleNumericFilter(String s) {
         List<Specification<Product>> numericFilterList = new ArrayList<>();
 
+        // REGEX handling
         String rx = "([=><]{1,2})+";
         StringBuilder stringBuilder = new StringBuilder();
         Pattern p = Pattern.compile(rx);

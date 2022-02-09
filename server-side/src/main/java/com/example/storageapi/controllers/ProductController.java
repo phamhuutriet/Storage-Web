@@ -34,7 +34,9 @@ public class ProductController {
     public ResponseEntity<List<Product>> searchBySpec(@Nullable @RequestParam(name = "name") String name,
                                                       @Nullable @RequestParam(name = "company") String company,
                                                       @Nullable @RequestParam(name = "numericFilter") String numericFilter,
-                                                      @Nullable @RequestParam(name = "sort") String sortQuery) {
-        return ResponseEntity.ok(productService.searchBySpec(name, company, numericFilter, sortQuery));
+                                                      @Nullable @RequestParam(name = "sort") String sortQuery,
+                                                      @Nullable @RequestParam(name = "page") String page,
+                                                      @Nullable @RequestParam(name = "limit") String limit) {
+        return ResponseEntity.ok(productService.searchBySpec(name, company, numericFilter, sortQuery, page, limit));
     }
 }
